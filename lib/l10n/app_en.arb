@@ -1,7 +1,23 @@
 {
   "settings": "Settings",
-  "language": "Language",
-  "theme": "Theme",
+  "account": "Account",
+  "name": "Name",
+  "email": "Email",
+  "appearance": "Appearance",
   "dark_mode": "Dark Mode",
-  "logout": "Logout"
+  "language": "Language",
+  "notifications": "Notifications",
+  "manageNotifications": "Manage Notifications",
+  "security": "Security",
+  "changePassword": "Change Password",
+  "logout": "Logout",
+  "appTitle": "Libyan Legal Cases Platform",
+  "searchHint": "Search by case number or court",
+  "all": "All",
+  "civil": "Civil",
+  "commercial": "Commercial",
+  "criminal": "Criminal",
+  "family": "Family",
+  "administrative": "Administrative",
+  "noCases": "No cases found"
 }

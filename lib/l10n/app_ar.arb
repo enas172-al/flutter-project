@@ -1,7 +1,23 @@
 {
   "settings": "الإعدادات",
-  "language": "اللغة",
-  "theme": "المظهر",
+  "account": "الحساب",
+  "name": "الاسم",
+  "email": "البريد الإلكتروني",
+  "appearance": "المظهر",
   "dark_mode": "الوضع الداكن",
-  "logout": "تسجيل الخروج"
+  "language": "اللغة",
+  "notifications": "الإشعارات",
+  "manageNotifications": "إدارة الإشعارات",
+  "security": "الأمان",
+  "changePassword": "تغيير كلمة المرور",
+  "logout": "تسجيل الخروج",
+  "appTitle": "منصة القضايا الليبية",
+  "searchHint": "ابحث برقم القضية أو المحكمة",
+  "all": "الكل",
+  "civil": "مدني",
+  "commercial": "تجاري",
+  "criminal": "جنائي",
+  "family": "أسرة",
+  "administrative": "إداري",
+  "noCases": "لا توجد قضايا"
 }

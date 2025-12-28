@@ -1,27 +1,28 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import '../../../core/constants/app_color.dart';
+import '../../profile/view/providers/theme_provider.dart';
+import '../../profile/view/providers/locale_provider.dart';
+import '../../../l10n/app_localizations.dart';
 import '../../notifications/view/notifications_screen.dart';
-import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
-import '../../../core/providers/theme_provider.dart';
-import 'package:provider/provider.dart';
-import '../../../core/providers/locale_provider.dart';
+
 
 class SettingsScreen extends StatelessWidget {
   const SettingsScreen({super.key});
 
   @override
-  Widget build(BuildContext context)
-  {
-    final themeProvider = Provider.of<ThemeProvider>(context);
+  Widget build(BuildContext context) {
+    final themeProvider = context.watch<ThemeProvider>();
+    final localeProvider = context.watch<LocaleProvider>();
+    final t = AppLocalizations.of(context)!;
+
     return Scaffold(
-      backgroundColor: Colors.grey.shade100,
       appBar: AppBar(
         backgroundColor: AppColors.primary,
         elevation: 0,
-        title: const Text(
-          'الإعدادات',
-          style: TextStyle(color: AppColors.gold),
+        title: Text(
+          t.settings,
+          style: const TextStyle(color: AppColors.gold),
         ),
         iconTheme: const IconThemeData(color: AppColors.gold),
       ),
@@ -30,12 +31,12 @@ class SettingsScreen extends StatelessWidget {
         children: [
           // ====== الحساب ======
           _sectionCard(
-            title: 'الحساب',
+            title: t.account ,
             icon: Icons.person_outline,
             child: Column(
-              children: const [
-                _InfoRow(title: 'الاسم', value: 'أحمد الزروق'),
-                _InfoRow(title: 'البريد الإلكتروني', value: 'ahmed@example.com'),
+              children: [
+                InfoRow(title: t.name ?? '', value: 'أحمد الزروق'),
+                InfoRow(title: t.email ?? '', value: 'ahmed@example.com'),
               ],
             ),
           ),
@@ -44,10 +45,10 @@ class SettingsScreen extends StatelessWidget {
 
           // ====== المظهر ======
           _sectionCard(
-            title: 'المظهر',
+            title: t.appearance,
             icon: Icons.palette_outlined,
             child: SwitchListTile(
-              title: const Text('الوضع الداكن'),
+              title: Text(t.dark_mode),
               value: themeProvider.isDark,
               onChanged: (value) {
                 themeProvider.toggleTheme(value);
@@ -55,35 +56,35 @@ class SettingsScreen extends StatelessWidget {
             ),
           ),
 
-
           const SizedBox(height: 16),
 
           // ====== اللغة ======
           _sectionCard(
-            title: 'اللغة',
+            title: t.language,
             icon: Icons.language,
             child: Column(
               children: [
                 RadioListTile<Locale>(
                   title: const Text('العربية'),
                   value: const Locale('ar'),
-                  groupValue: context.watch<LocaleProvider>().locale,
+                  groupValue: localeProvider.locale,
                   onChanged: (value) {
-                    context.read<LocaleProvider>().setLocale(value!);
+                    localeProvider.setLocale(value!.languageCode);
+
                   },
                 ),
                 RadioListTile<Locale>(
                   title: const Text('English'),
                   value: const Locale('en'),
-                  groupValue: context.watch<LocaleProvider>().locale,
+                  groupValue: localeProvider.locale,
                   onChanged: (value) {
-                    context.read<LocaleProvider>().setLocale(value!);
+                    localeProvider.setLocale(value!.languageCode);
+
                   },
                 ),
               ],
             ),
           ),
-
 
           const SizedBox(height: 16),
 
@@ -91,8 +92,8 @@ class SettingsScreen extends StatelessWidget {
           _sectionCard(
             child: _item(
               icon: Icons.notifications_none,
-              title: 'الإشعارات',
-              subtitle: 'إدارة الإشعارات',
+              title: t.notifications,
+              subtitle: t.manageNotifications,
               onTap: () {
                 Navigator.push(
                   context,
@@ -108,72 +109,26 @@ class SettingsScreen extends StatelessWidget {
 
           // ====== الأمان ======
           _sectionCard(
-            title: 'الأمان',
+            title: t.security,
             icon: Icons.lock_outline,
             child: Column(
               children: [
                 _securityButton(
                   context,
-                  text: 'تغيير كلمة المرور',
-                  color: Colors.white,
-                  textColor: Colors.black87,
-                  onTap: () {
-                    // TODO: صفحة تغيير كلمة المرور
-                  },
+                  text: t.changePassword,
+                  color: Theme.of(context).cardColor,
+                  textColor: Theme.of(context).textTheme.bodyLarge!.color!,
+                  onTap: () {},
                 ),
                 const SizedBox(height: 8),
                 _securityButton(
                   context,
-                  text: 'تسجيل الخروج',
+                  text: t.logout,
                   color: Colors.red.shade50,
                   textColor: Colors.red,
                   onTap: () {
-                    // TODO: تسجيل الخروج
+                    // TODO: logout حقيقي
                   },
-                ),
-              ],
-            ),
-          ),
-
-          const SizedBox(height: 16),
-
-          // ====== حفظ التغييرات ======
-          Container(
-            padding: const EdgeInsets.all(16),
-            decoration: BoxDecoration(
-              color: const Color(0xFFFFF3CD),
-              borderRadius: BorderRadius.circular(12),
-            ),
-            child: Row(
-              children: [
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: const [
-                      Text(
-                        'حفظ التغييرات',
-                        style: TextStyle(fontWeight: FontWeight.bold),
-                      ),
-                      SizedBox(height: 4),
-                      Text(
-                        'تأكد من حفظ إعداداتك قبل المغادرة',
-                        style: TextStyle(fontSize: 12),
-                      ),
-                    ],
-                  ),
-                ),
-                ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: AppColors.gold,
-                    foregroundColor: Colors.black,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(20),
-                    ),
-                  ),
-                  onPressed: () {
-                    // TODO: حفظ الإعدادات
-                  },
-                  child: const Text('حفظ'),
                 ),
               ],
             ),
@@ -235,7 +190,6 @@ class SettingsScreen extends StatelessWidget {
       ),
     );
   }
-
   Widget _securityButton(
       BuildContext context, {
         required String text,
@@ -264,15 +218,18 @@ class SettingsScreen extends StatelessWidget {
         ),
       ),
     );
-  }
-}
+  }}
 
-// ====== عنصر معلومات الحساب ======
-class _InfoRow extends StatelessWidget {
+// ✅ لازم يكون في نفس الملف
+class InfoRow extends StatelessWidget {
   final String title;
   final String value;
 
-  const _InfoRow({required this.title, required this.value});
+  const InfoRow({
+    super.key,
+    required this.title,
+    required this.value,
+  });
 
   @override
   Widget build(BuildContext context) {

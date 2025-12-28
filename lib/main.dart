@@ -2,16 +2,23 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'core/constants/app_color.dart';
-import 'core/providers/theme_provider.dart';
-import 'core/providers/locale_provider.dart';
+import 'features/profile/view/providers/theme_provider.dart';
+import 'features/profile/view/providers/locale_provider.dart';
 import 'features/welcome/view/welcome_screen.dart';
 
-void main() {
+import 'l10n/app_localizations.dart' show AppLocalizations;
+
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+
+  final localeProvider = LocaleProvider();
+  await localeProvider.loadLocale();
+
   runApp(
     MultiProvider(
       providers: [
         ChangeNotifierProvider(create: (_) => ThemeProvider()),
-        ChangeNotifierProvider(create: (_) => LocaleProvider()),
+        ChangeNotifierProvider.value(value: localeProvider),
       ],
       child: const MyApp(),
     ),
@@ -34,12 +41,13 @@ class MyApp extends StatelessWidget {
         Locale('ar'),
         Locale('en'),
       ],
-
       localizationsDelegates: const [
+        AppLocalizations.delegate,
         GlobalMaterialLocalizations.delegate,
         GlobalWidgetsLocalizations.delegate,
         GlobalCupertinoLocalizations.delegate,
       ],
+
 
       themeMode: themeProvider.themeMode,
 
