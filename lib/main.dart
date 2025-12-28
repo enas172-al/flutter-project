@@ -1,9 +1,21 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 import 'core/constants/app_color.dart';
+import 'core/providers/theme_provider.dart';
+import 'core/providers/locale_provider.dart';
 import 'features/welcome/view/welcome_screen.dart';
 
 void main() {
-  runApp(const MyApp());
+  runApp(
+    MultiProvider(
+      providers: [
+        ChangeNotifierProvider(create: (_) => ThemeProvider()),
+        ChangeNotifierProvider(create: (_) => LocaleProvider()),
+      ],
+      child: const MyApp(),
+    ),
+  );
 }
 
 class MyApp extends StatelessWidget {
@@ -11,15 +23,39 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final themeProvider = context.watch<ThemeProvider>();
+    final localeProvider = context.watch<LocaleProvider>();
+
     return MaterialApp(
       debugShowCheckedModeBanner: false,
 
+      locale: localeProvider.locale,
+      supportedLocales: const [
+        Locale('ar'),
+        Locale('en'),
+      ],
+
+      localizationsDelegates: const [
+        GlobalMaterialLocalizations.delegate,
+        GlobalWidgetsLocalizations.delegate,
+        GlobalCupertinoLocalizations.delegate,
+      ],
+
+      themeMode: themeProvider.themeMode,
+
       theme: ThemeData(
+        brightness: Brightness.light,
         fontFamily: 'Cairo',
         primaryColor: AppColors.primary,
       ),
 
-      home: const WelcomeScreen(), // 👈 البداية
+      darkTheme: ThemeData(
+        brightness: Brightness.dark,
+        fontFamily: 'Cairo',
+        primaryColor: AppColors.primary,
+      ),
+
+      home: const WelcomeScreen(),
     );
   }
 }
