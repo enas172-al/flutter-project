@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import '../../../core/constants/app_color.dart';
+import '../../settings/view/notifications_list_screen.dart';
 import '../model/case_model.dart';
 import 'case_card.dart';
 import '../../settings/view/settings_screen.dart';
+
 
 class HomeCasesScreen extends StatefulWidget {
   const HomeCasesScreen({super.key});
@@ -149,9 +151,16 @@ class _HomeCasesScreenState extends State<HomeCasesScreen> {
           IconButton(
             icon: const Icon(Icons.notifications, color: AppColors.gold),
             onPressed: () {
-              // لاحقًا صفحة الإشعارات
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (_) => const NotificationsListScreen(),
+                ),
+              );
             },
           ),
+
+
           IconButton(
             icon: const Icon(Icons.settings, color: AppColors.gold),
             onPressed: () {
@@ -237,3 +246,4 @@ class _HomeCasesScreenState extends State<HomeCasesScreen> {
     );
   }
 }
+

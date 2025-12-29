@@ -6,9 +6,18 @@ import '../../profile/view/providers/locale_provider.dart';
 import '../../../l10n/app_localizations.dart';
 import '../../notifications/view/notifications_screen.dart';
 
-
-class SettingsScreen extends StatelessWidget {
+class SettingsScreen extends StatefulWidget {
   const SettingsScreen({super.key});
+
+  @override
+  State<SettingsScreen> createState() => _SettingsScreenState();
+}
+
+class _SettingsScreenState extends State<SettingsScreen> {
+  // ====== حالة الإشعارات (شكل فقط) ======
+  bool notificationsEnabled = true;
+  bool soundEnabled = true;
+  bool vibrationEnabled = false;
 
   @override
   Widget build(BuildContext context) {
@@ -21,7 +30,7 @@ class SettingsScreen extends StatelessWidget {
         backgroundColor: AppColors.primary,
         elevation: 0,
         title: Text(
-          t.settings,
+          t.settings ?? '',
           style: const TextStyle(color: AppColors.gold),
         ),
         iconTheme: const IconThemeData(color: AppColors.gold),
@@ -31,7 +40,7 @@ class SettingsScreen extends StatelessWidget {
         children: [
           // ====== الحساب ======
           _sectionCard(
-            title: t.account ,
+            title: t.account ?? '',
             icon: Icons.person_outline,
             child: Column(
               children: [
@@ -45,14 +54,12 @@ class SettingsScreen extends StatelessWidget {
 
           // ====== المظهر ======
           _sectionCard(
-            title: t.appearance,
+            title: t.appearance ?? '',
             icon: Icons.palette_outlined,
             child: SwitchListTile(
-              title: Text(t.dark_mode),
+              title: Text(t.dark_mode ?? ''),
               value: themeProvider.isDark,
-              onChanged: (value) {
-                themeProvider.toggleTheme(value);
-              },
+              onChanged: themeProvider.toggleTheme,
             ),
           ),
 
@@ -60,7 +67,7 @@ class SettingsScreen extends StatelessWidget {
 
           // ====== اللغة ======
           _sectionCard(
-            title: t.language,
+            title: t.language ?? '',
             icon: Icons.language,
             child: Column(
               children: [
@@ -70,7 +77,6 @@ class SettingsScreen extends StatelessWidget {
                   groupValue: localeProvider.locale,
                   onChanged: (value) {
                     localeProvider.setLocale(value!.languageCode);
-
                   },
                 ),
                 RadioListTile<Locale>(
@@ -79,7 +85,6 @@ class SettingsScreen extends StatelessWidget {
                   groupValue: localeProvider.locale,
                   onChanged: (value) {
                     localeProvider.setLocale(value!.languageCode);
-
                   },
                 ),
               ],
@@ -88,20 +93,58 @@ class SettingsScreen extends StatelessWidget {
 
           const SizedBox(height: 16),
 
-          // ====== الإشعارات ======
+          // ====== الإشعارات (تفعيل / إلغاء – شكل فقط) ======
           _sectionCard(
-            child: _item(
-              icon: Icons.notifications_none,
-              title: t.notifications,
-              subtitle: t.manageNotifications,
-              onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (_) => const NotificationsScreen(),
-                  ),
-                );
-              },
+            title: t.notifications ?? '',
+            icon: Icons.notifications_none,
+            child: Column(
+              children: [
+                SwitchListTile(
+                  title: const Text('تفعيل الإشعارات'),
+                  value: notificationsEnabled,
+                  onChanged: (value) {
+                    setState(() {
+                      notificationsEnabled = value;
+                    });
+                  },
+                ),
+                SwitchListTile(
+                  title: const Text('الصوت'),
+                  value: soundEnabled,
+                  onChanged: notificationsEnabled
+                      ? (value) {
+                    setState(() {
+                      soundEnabled = value;
+                    });
+                  }
+                      : null,
+                ),
+                SwitchListTile(
+                  title: const Text('الاهتزاز'),
+                  value: vibrationEnabled,
+                  onChanged: notificationsEnabled
+                      ? (value) {
+                    setState(() {
+                      vibrationEnabled = value;
+                    });
+                  }
+                      : null,
+                ),
+                const Divider(),
+                ListTile(
+                  title: Text(t.manageNotifications ?? ''),
+                  trailing:
+                  const Icon(Icons.arrow_forward_ios, size: 16),
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (_) => const NotificationsScreen(),
+                      ),
+                    );
+                  },
+                ),
+              ],
             ),
           ),
 
@@ -109,26 +152,26 @@ class SettingsScreen extends StatelessWidget {
 
           // ====== الأمان ======
           _sectionCard(
-            title: t.security,
+            title: t.security ?? '',
             icon: Icons.lock_outline,
             child: Column(
               children: [
                 _securityButton(
                   context,
-                  text: t.changePassword,
+                  text: t.changePassword ?? '',
                   color: Theme.of(context).cardColor,
-                  textColor: Theme.of(context).textTheme.bodyLarge!.color!,
-                  onTap: () {},
+                  textColor:
+                  Theme.of(context).textTheme.bodyLarge?.color ??
+                      Colors.black,
+                  onTap: () {}, // شكل فقط
                 ),
                 const SizedBox(height: 8),
                 _securityButton(
                   context,
-                  text: t.logout,
+                  text: t.logout ?? '',
                   color: Colors.red.shade50,
                   textColor: Colors.red,
-                  onTap: () {
-                    // TODO: logout حقيقي
-                  },
+                  onTap: () {}, // شكل فقط
                 ),
               ],
             ),
@@ -138,7 +181,7 @@ class SettingsScreen extends StatelessWidget {
     );
   }
 
-  // ====== عناصر ======
+  // ====== عناصر مساعدة ======
 
   Widget _item({
     required IconData icon,
@@ -169,7 +212,7 @@ class SettingsScreen extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            if (title != null)
+            if (title != null && title.isNotEmpty)
               Padding(
                 padding: const EdgeInsets.only(bottom: 8),
                 child: Row(
@@ -179,7 +222,8 @@ class SettingsScreen extends StatelessWidget {
                     if (icon != null) const SizedBox(width: 6),
                     Text(
                       title,
-                      style: const TextStyle(fontWeight: FontWeight.bold),
+                      style:
+                      const TextStyle(fontWeight: FontWeight.bold),
                     ),
                   ],
                 ),
@@ -190,6 +234,7 @@ class SettingsScreen extends StatelessWidget {
       ),
     );
   }
+
   Widget _securityButton(
       BuildContext context, {
         required String text,
@@ -218,9 +263,10 @@ class SettingsScreen extends StatelessWidget {
         ),
       ),
     );
-  }}
+  }
+}
 
-// ✅ لازم يكون في نفس الملف
+// ====== InfoRow ======
 class InfoRow extends StatelessWidget {
   final String title;
   final String value;
